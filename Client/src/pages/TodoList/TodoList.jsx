@@ -68,7 +68,9 @@ const TodoList = () => {
     <>
       <div className="todo-container">
         {todoList?.map((todoItem, index) => (
-          <div className="todo-list-container" key={index}>
+          <div className={`todo-list-container ${
+            todoItem?.isCompleted && "complete"
+          }`} key={index}>
             <div className="title-container">
               <div className="title-box">
                 <h2
