@@ -1,0 +1,38 @@
+.todo-input{
+    width: 100%;
+    max-width: 800px;
+    padding: 8px;
+    border-radius:  10px;
+    border: none;
+    background-color: var(--bg-dark-grey);
+    margin-block: 5px;
+    color: white;
+}
+
+.todo-input[type="date"]{
+    color: var(--bg-light-grey);
+}
+
+.todo-checkbox[type="checkbox"]{
+    width: 1.5rem;
+    height: 1.5rem;
+    background-color: none;
+    border-radius: 50%;
+    vertical-align: middle;
+    border: 1px solid var(--button-color);
+    appearance: none;
+    -webkit-appearance: none;
+    outline: none;
+    cursor: pointer;
+}
+
+.todo-checkbox[type="checkbox"]:checked{
+    background-color:  var(--list-completed);
+    border: 1px solid var(--list-completed);
+
+}
+
+.todo-input:focus{
+    outline: 1px solid var(--bg-light-grey);
+    color: white;
+}

@@ -1,0 +1,13 @@
+header{
+    margin-top: 10px;
+    padding-inline: 30px;
+    padding-block: 15px;
+}
+
+.logo {
+    color: var(--logo-color);
+}
+
+.logo span {
+    color: var(--button-color);
+}
