@@ -9,7 +9,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <ErrorProvider>
       <TodoProvider>
-        <App />
+          <App />
       </TodoProvider>
     </ErrorProvider>
   </React.StrictMode>

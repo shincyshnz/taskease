@@ -1,5 +1,4 @@
 import React from "react";
-import Input from "../../components/Input/Input";
 import Button from "../../components/Button/Button";
 import {
   MdDeleteOutline,
@@ -14,7 +13,13 @@ import { toast } from "react-toastify";
 const API_URL = "http://localhost:3050/api/todo";
 
 const TodoList = () => {
-  const { todoList, updateTodoList, deleteTodoList, setTodoObj } = useTodo();
+  const {
+    todoList,
+    updateTodoList,
+    deleteTodoList,
+    setTodoObj,
+    resetTodoObj,
+  } = useTodo();
 
   const handleEdit = (todoId) => {
     const found = todoList.find((todo) => todo._id == todoId);
@@ -51,6 +56,7 @@ const TodoList = () => {
       });
 
       if (response) {
+        resetTodoObj();
         toast.warning("Todo deleted successfully");
         deleteTodoList(response?.data?.result);
       }
@@ -68,9 +74,12 @@ const TodoList = () => {
     <>
       <div className="todo-container">
         {todoList?.map((todoItem, index) => (
-          <div className={`todo-list-container ${
-            todoItem?.isCompleted && "complete"
-          }`} key={index}>
+          <div
+            className={`todo-list-container ${
+              todoItem?.isCompleted && "complete"
+            }`}
+            key={index}
+          >
             <div className="title-container">
               <div className="title-box">
                 <h2
@@ -79,7 +88,7 @@ const TodoList = () => {
                   }`}
                   style={{ color: "white" }}
                 >
-                  {todoItem?.title.toUpperCase()}
+                  {todoItem?.title?.toUpperCase()}
                 </h2>
               </div>
 

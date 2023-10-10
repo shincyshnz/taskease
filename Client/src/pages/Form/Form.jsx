@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Input from "../../components/Input/Input";
 import TextArea from "../../components/TextArea/TextArea";
 import Button from "../../components/Button/Button";
@@ -16,9 +16,8 @@ const Form = () => {
     updateTodoObj,
     resetTodoObj,
     addTodoList,
-    updateTodoList,
+    updateTodoList
   } = useTodo();
-  const [isComplete, setIsComplete] = useState(false);
 
   const handleChange = (event) => {
     const { value, name } = event.target;
@@ -109,6 +108,10 @@ const Form = () => {
     }
   };
 
+  const handleCancel = () => {
+    resetTodoObj();
+  };
+
   return (
     <>
       <div className="container">
@@ -142,6 +145,11 @@ const Form = () => {
               className={"btn-add"}
               onClick={handleSave}
               buttonText={"Save"}
+            />
+            <Button
+              className={"btn-add"}
+              onClick={handleCancel}
+              buttonText={"Cancel"}
             />
           </>
         ) : (

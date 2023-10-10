@@ -57,33 +57,37 @@ export const TodoProvider = ({ children }) => {
   useEffect(() => {
     deleteErrorMessage("apiError");
     fetchTodos();
-  }, [todoList]);
+  }, [todoObj]);
 
   const addTodoList = (todoItem) => {
-    setTodoList((prev) => ({
+    setTodoList((prev) => ([
       ...prev,
       todoItem,
-    }));
+    ]));
   };
 
   const updateTodoList = (todoItem) => {
-    const tempTodos = todoList.map((todo) => {
-      if (todo._id === todoItem._id) {
-        todo = todoItem;
-      }
-      return todo;
-    });
-    setTodoList((prev) => (prev = tempTodos));
+    // const tempTodos = todoList.map((todo) => {
+    //   if (todo._id === todoItem._id) {
+    //     todo = todoItem;
+    //   }
+    //   return todo;
+    // });
+    // setTodoList((prev) => (prev = tempTodos));
+    setTodoList((prev) =>
+      prev.map((todo) => (todo._id === todoItem._id ? todoItem : todo))
+    );
   };
 
   const deleteTodoList = (todoItem) => {
-    const tempTodos = todoList.filter((todo) => {
-      if (todo._id !== todoItem._id) {
-        todo = todoItem;
-      }
-      return todo;
-    });
-    setTodoList((prev) => (prev = tempTodos));
+    // const tempTodos = todoList.filter((todo) => {
+    //   if (todo._id !== todoItem._id) {
+    //     todo = todoItem;
+    //   }
+    //   return todo;
+    // });
+    // setTodoList((prev) => (prev = tempTodos));
+    setTodoList((prev) => prev.filter((todo) => todo._id !== todoItem._id));
   };
 
   return (
