@@ -12,7 +12,7 @@ connectDb();
 
 app.get("/api/todo", async (req, res) => {
     try {
-        const taskList = await todoModel.find().sort({ date: "asc" });
+        const taskList = await todoModel.find().sort({ date: "desc" });
         res.status(200).json({
             result: taskList
         });

@@ -9,6 +9,8 @@ import "./TodoList.css";
 import { useTodo } from "../../context/todoContext";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useQuery } from "@tanstack/react-query";
+import { getTodos } from "../../api/todosAPI";
 
 const API_URL = "http://localhost:3050/api/todo";
 
@@ -20,6 +22,12 @@ const TodoList = () => {
     setTodoObj,
     resetTodoObj,
   } = useTodo();
+
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["todos"],
+    queryFn: getTodos,
+  });
+  console.log(data?.result);
 
   const handleEdit = (todoId) => {
     const found = todoList.find((todo) => todo._id == todoId);
