@@ -7,12 +7,11 @@ Simple task manager app to help users to stay organized for their day to day tas
 
 - REACT
 - AXIOS
-- React Toastify
+- REACT TOASTIFY
 - NODEJS
 - EXPRESS
 - CORS
-- DOTENV
-- MongoDB
+- NONGODB
 
 ## How to use?
 
@@ -37,7 +36,6 @@ Simple task manager app to help users to stay organized for their day to day tas
 
 - Start the server: `npm run dev`
 - Files other than `index.js` can be run using : `node <filename.js>`
-- Install Dotenv:`npm install dotenv`
 
 ## Client Side installation
 
