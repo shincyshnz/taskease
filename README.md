@@ -43,3 +43,4 @@ Simple task manager app to help users to stay organized for their day to day tas
 
 - Install axios: `npm i axios`
 - Install axios: `npm install --save react-toastify` 
+- Install tanstack Query: `npm install @tanstack/react-query` 
