@@ -60,10 +60,7 @@ export const TodoProvider = ({ children }) => {
   }, []);
 
   const addTodoList = (todoItem) => {
-    setTodoList((prev) => ([
-      ...prev,
-      todoItem,
-    ]));
+    setTodoList((prev) => [...prev, todoItem]);
   };
 
   const updateTodoList = (todoItem) => {

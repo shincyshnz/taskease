@@ -11,7 +11,12 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useError } from "../../context/errorContext";
-import { deleteTodo, getTodos, postTodos } from "../../api/todosAPI";
+import {
+  completeTodo,
+  deleteTodo,
+  getTodos,
+  postTodos,
+} from "../../api/todosAPI";
 
 const API_URL = "http://localhost:3050/api/todo";
 
@@ -35,21 +40,37 @@ const TodoList = () => {
   const deleteMutation = useMutation({
     mutationFn: (todo) => deleteTodo(todo),
     onSuccess: (data) => {
+      // Update todoList in cache without refetching
+      queryClient.setQueryData(["todos"], (prevData) =>
+        prevData.filter((todo) => todo._id !== data.result)
+      );
       toast.warning("Todo deleted successfully");
-      queryClient.invalidateQueries({ queryKey: ["todos"] });
+
+      // refetch todoList
+      // queryClient.invalidateQueries({ queryKey: ["todos"] });
     },
   });
 
-
   deleteMutation.isError && toast.error(deleteMutation.error.message);
 
-  // const isCompleteMutation = useMutation({
-  //   mutationFn: postTodos(todo),
-  //   onSuccess: (data) => {
-  //     toast.success("Hurray!... You completed the task");
-  //     queryClient.invalidateQueries({ queryKey: ["todos"] });
-  //   },
-  // });
+  const isCompleteMutation = useMutation({
+    mutationFn: (todoId) => completeTodo(todoId),
+    onSuccess: (data, variables) => {
+      queryClient.setQueryData(["todos"], (prevData) => {
+        return prevData.map((todo) => {
+          if (todo._id === variables) {
+            todo.isCompleted = data?.result?.isCompleted;
+          }
+          return todo;
+        });
+      });
+
+      data?.result?.isCompleted &&
+        toast.success(`Hurray!... You completed the ${data?.result?.title}`);
+    },
+  });
+
+  isCompleteMutation.isError && toast.error(isCompleteMutation.error.message);
 
   useEffect(() => {
     if (error) {
@@ -136,13 +157,14 @@ const TodoList = () => {
 
                 <MdTaskAlt
                   size={25}
+                  cursor="pointer"
                   color={`${
                     todoItem?.isCompleted
                       ? "var( --list-completed)"
                       : "var(--bg-light-grey)"
                   }`}
                   // onClick={() => handleIsComplete(todoItem?._id)}
-                  onClick={() => editMutation.mutate({ id: todoItem?._id })}
+                  onClick={() => isCompleteMutation.mutate(todoItem?._id)}
                 />
               </div>
 
