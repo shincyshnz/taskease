@@ -1,24 +1,51 @@
-import React, { useEffect, useState } from "react";
-import Input from "../../components/Input/Input";
-import TextArea from "../../components/TextArea/TextArea";
-import Button from "../../components/Button/Button";
+import React from "react";
+import { Input, Button, TextArea } from "../../components/index";
 import { useError } from "../../context/errorContext";
 import { useTodo } from "../../context/todoContext";
-import axios from "axios";
 import { toast } from "react-toastify";
-
-const API_URL = "http://localhost:3050/api/todo";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { formatDate, postTodos } from "../../api/todosAPI";
 
 const Form = () => {
+  const queryClient = useQueryClient();
   const { errorObj, setErrorMessage, deleteErrorMessage } = useError();
-  const {
-    todoObj,
-    updateTodoObj,
-    resetTodoObj,
-    addTodoList,
-    updateTodoList
-  } = useTodo();
+  const { todoObj, updateTodoObj, resetTodoObj } = useTodo();
 
+  // Add Todos
+  const addMutation = useMutation({
+    mutationFn: (todo) => postTodos(todo),
+    onSuccess: (data, variables) => {
+      queryClient.setQueryData(["todos"], (prevData) => [
+        ...prevData,
+        data?.result,
+      ]);
+      toast.success("Todo added successfully");
+
+      resetTodoObj();
+    },
+  });
+  addMutation.error && toast.error(addMutation.error.message);
+
+  // Update Todos
+  const updateMutation = useMutation({
+    mutationFn: (todo) => postTodos(todo),
+    onSuccess: (data, variables) => {
+      queryClient.setQueryData(["todos"], (prevData) => {
+        return prevData.map((todo) => {
+          if (todo._id === variables._id) {
+            todo = data?.result;
+            todo.date = formatDate(data?.result?.date);
+          }
+          return todo;
+        });
+      });
+      toast.success(`${data?.result?.title} updated successfully`);
+      resetTodoObj();
+    },
+  });
+  updateMutation.error && toast.error(updateMutation.error.message);
+
+  // Handle input OnChange
   const handleChange = (event) => {
     const { value, name } = event.target;
     deleteErrorMessage(name);
@@ -42,16 +69,23 @@ const Form = () => {
       return;
     }
 
-    if (name == "date") {
+    if (name === "date") {
       const today = new Date();
-      value <= today &&
+      const dueDate = new Date(value);
+      dueDate <= today &&
         setErrorMessage(name, "Due Date must be Today or future");
       return;
     }
   };
 
+  // Handle Form Submit
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    if (todoObj.date === "") {
+      setErrorMessage("date", "Select a due date");
+      return;
+    }
 
     if (
       errorObj.title !== "" ||
@@ -60,56 +94,23 @@ const Form = () => {
     )
       return;
 
-    if (todoObj.date === "") {
-      setErrorMessage("date", "Select a due date");
-      return;
-    }
-
-    try {
-      const response = await axios(API_URL, {
-        method: "POST",
-        data: todoObj,
-      });
-
-      if (response) {
-        addTodoList(response.data);
-        toast.success("Todo added successfully");
-        resetTodoObj();
-      }
-    } catch (error) {
-      toast.error(error.message);
-    }
+    addMutation.mutate(todoObj);
   };
 
+
+  // Handling Edit
   const handleSave = async (event) => {
     event.preventDefault();
 
-    // const anyError = Object.values(errorObj).some((err) => err !== "");
-    // if (anyError) return;
+    const anyError = Object.values(errorObj).some((err) => err !== "");
+    if (anyError) return;
 
     if (todoObj.date === "") {
       setErrorMessage("date", "Select a due date");
       return;
     }
 
-    try {
-      const response = await axios(API_URL, {
-        method: "PUT",
-        data: todoObj,
-      });
-
-      if (response) {
-        resetTodoObj();
-        updateTodoList(response.data);
-        toast.success("Todo updated successfully");
-      }
-    } catch (error) {
-      toast.error(error.message);
-    }
-  };
-
-  const handleCancel = () => {
-    resetTodoObj();
+    updateMutation.mutate(todoObj);
   };
 
   return (
@@ -135,9 +136,6 @@ const Form = () => {
           placeholder="Due Date"
         />
         {errorObj.date && <label className="error">{errorObj.date}</label>}
-        {errorObj.apiError && (
-          <label className="error">{errorObj.apiError}</label>
-        )}
 
         {todoObj?._id ? (
           <>
@@ -148,7 +146,7 @@ const Form = () => {
             />
             <Button
               className={"btn-add"}
-              onClick={handleCancel}
+              onClick={() => resetTodoObj()}
               buttonText={"Cancel"}
             />
           </>
@@ -158,6 +156,10 @@ const Form = () => {
             onClick={handleSubmit}
             buttonText={"Add"}
           />
+        )}
+
+        {errorObj.apiError && (
+          <label className="error">{errorObj.apiError}</label>
         )}
       </div>
     </>

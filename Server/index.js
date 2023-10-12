@@ -12,7 +12,7 @@ connectDb();
 
 app.get("/api/todo", async (req, res) => {
     try {
-        const taskList = await todoModel.find().sort({ date: "asc" });
+        const taskList = await todoModel.find().sort({ date: "desc" });
         res.status(200).json({
             result: taskList
         });
@@ -61,7 +61,7 @@ app.put("/api/todo", async (req, res) => {
 
         const newTask = await todoModel.findByIdAndUpdate(_id, todoItem, { new: true });
 
-        if(!newTask){
+        if (!newTask) {
             return res.status(404).json({
                 message: `Item with id : ${id} does not exists`,
             });
@@ -69,6 +69,29 @@ app.put("/api/todo", async (req, res) => {
 
         res.status(200).json({
             result: newTask
+        });
+    } catch (error) {
+        res.status(400).json({
+            message: error.message,
+        });
+    }
+
+});
+
+app.put("/api/todo/:id", async (req, res) => {
+    const { id } = req.params;
+    try {
+        const taskFound = await todoModel.findById(id);
+
+        if (!taskFound) {
+            return res.status(404).json({
+                message: `Item with id : ${id} does not exists`,
+            });
+        }
+
+        const updatedTask = await todoModel.findByIdAndUpdate(id, { isCompleted: !taskFound.isCompleted }, { new: true });
+        res.status(200).json({
+            result: updatedTask
         });
     } catch (error) {
         res.status(400).json({
@@ -91,7 +114,7 @@ app.delete("/api/todo", async (req, res) => {
         }
 
         res.status(200).json({
-            result : deletedData._id
+            result: deletedData._id
         });
     } catch (error) {
         res.status(400).json({
@@ -102,8 +125,9 @@ app.delete("/api/todo", async (req, res) => {
 });
 
 app.get("/*", (req, res) => {
+    const url = req.url;
     res.status(400).json({
-        message: "API url doesnot exists ",
+        message: `"${url}" url doesnot exists`,
     });
 
 });

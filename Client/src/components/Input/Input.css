@@ -29,7 +29,6 @@
 .todo-checkbox[type="checkbox"]:checked{
     background-color:  var(--list-completed);
     border: 1px solid var(--list-completed);
-
 }
 
 .todo-input:focus{
