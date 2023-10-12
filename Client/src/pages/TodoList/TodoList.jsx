@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import "./TodoList.css";
 import {
   MdDeleteOutline,
@@ -6,26 +6,19 @@ import {
   MdTaskAlt,
 } from "react-icons/md";
 import { toast } from "react-toastify";
-import Button from "../../components/Button/Button";
+import { Button } from "../../components/index";
 import { useError } from "../../context/errorContext";
 import { useTodo } from "../../context/todoContext";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { completeTodo, deleteTodo, getTodos } from "../../api/todosAPI";
 
-const API_URL = "http://localhost:3050/api/todo";
-
 const TodoList = () => {
-  const {
-    // todoList,
-    updateTodoList,
-    deleteTodoList,
-    setTodoObj,
-    resetTodoObj,
-  } = useTodo();
+  const { setTodoObj } = useTodo();
 
   const queryClient = useQueryClient();
   const { setErrorMessage } = useError();
 
+  // Fetching Todo List from DB
   const { data: todoList, isLoading, error } = useQuery({
     queryKey: ["todos"],
     queryFn: getTodos,
@@ -39,9 +32,6 @@ const TodoList = () => {
         prevData.filter((todo) => todo._id !== data.result)
       );
       toast.warning("Todo deleted successfully");
-
-      // refetch todoList
-      // queryClient.invalidateQueries({ queryKey: ["todos"] });
     },
   });
 
@@ -76,54 +66,11 @@ const TodoList = () => {
     }
   }, [error]);
 
+  // Populating edit data to the form
   const handleEdit = (todoId) => {
     const found = todoList?.find((todo) => todo._id == todoId);
     setTodoObj((prev) => (prev = found));
   };
-
-  // const handleIsComplete = async (todoId) => {
-  //   const found = todoList.find((todo) => todo._id == todoId);
-  //   found.isCompleted = !found.isCompleted;
-
-  //   try {
-  //     const response = await axios(API_URL, {
-  //       method: "PUT",
-  //       data: found,
-  //     });
-
-  //     if (response) {
-  //       updateTodoList(response.data);
-  //       response.data.result.isCompleted &&
-  //         toast.success(`${response.data.result.title} Completed successfully`);
-  //     }
-  //   } catch (error) {
-  //     toast.error(error.message);
-  //   }
-  // };
-
-  // const handleDelete = async (todoId) => {
-  //   try {
-  //     const response = await axios(API_URL, {
-  //       method: "DELETE",
-  //       data: {
-  //         id: todoId,
-  //       },
-  //     });
-
-  //     if (response) {
-  //       resetTodoObj();
-  //       toast.warning("Todo deleted successfully");
-  //       deleteTodoList(response?.data?.result);
-  //     }
-  //   } catch (err) {
-  //     setErrorInputField((prev) => ({
-  //       ...prev,
-  //       apiError: {
-  //         errorMessage: err.response.data.message,
-  //       },
-  //     }));
-  //   }
-  // };
 
   return (
     <>
@@ -158,7 +105,6 @@ const TodoList = () => {
                       ? "var( --list-completed)"
                       : "var(--bg-light-grey)"
                   }`}
-                  // onClick={() => handleIsComplete(todoItem?._id)}
                   onClick={() => isCompleteMutation.mutate(todoItem?._id)}
                 ></MdTaskAlt>
               </div>
@@ -183,7 +129,6 @@ const TodoList = () => {
                   ></Button>
                   <Button
                     className="todo-delete"
-                    // onClick={() => handleDelete(todoItem?._id)}
                     onClick={() => deleteMutation.mutate({ id: todoItem?._id })}
                     buttonText={<MdDeleteOutline className="md" />}
                   ></Button>

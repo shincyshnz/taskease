@@ -26,7 +26,6 @@ export const getTodos = async () => {
 
 // Create or update todos
 export const postTodos = async (todoObj) => {
-
   const response = await axios(import.meta.env.VITE_TODOS_API, {
     method:"POST",
     data: todoObj,
@@ -55,7 +54,6 @@ export const deleteTodo = async (todo) => {
 
 // Update complete status for todos
 export const completeTodo = async (todoId) => {
-
   const response = await axios.put(`${import.meta.env.VITE_TODOS_API}/${todoId}`);
   return response?.data;
 };

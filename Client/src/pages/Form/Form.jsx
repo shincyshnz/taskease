@@ -1,28 +1,17 @@
 import React from "react";
-import Input from "../../components/Input/Input";
-import TextArea from "../../components/TextArea/TextArea";
-import Button from "../../components/Button/Button";
+import { Input, Button, TextArea } from "../../components/index";
 import { useError } from "../../context/errorContext";
 import { useTodo } from "../../context/todoContext";
-import axios from "axios";
 import { toast } from "react-toastify";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { formatDate, postTodos } from "../../api/todosAPI";
 
-const API_URL = "http://localhost:3050/api/todo";
-
 const Form = () => {
-  const { errorObj, setErrorMessage, deleteErrorMessage } = useError();
-  const {
-    todoObj,
-    updateTodoObj,
-    resetTodoObj,
-    addTodoList,
-    updateTodoList,
-  } = useTodo();
-
   const queryClient = useQueryClient();
+  const { errorObj, setErrorMessage, deleteErrorMessage } = useError();
+  const { todoObj, updateTodoObj, resetTodoObj } = useTodo();
 
+  // Add Todos
   const addMutation = useMutation({
     mutationFn: (todo) => postTodos(todo),
     onSuccess: (data, variables) => {
@@ -37,6 +26,7 @@ const Form = () => {
   });
   addMutation.error && toast.error(addMutation.error.message);
 
+  // Update Todos
   const updateMutation = useMutation({
     mutationFn: (todo) => postTodos(todo),
     onSuccess: (data, variables) => {
@@ -55,6 +45,7 @@ const Form = () => {
   });
   updateMutation.error && toast.error(updateMutation.error.message);
 
+  // Handle input OnChange
   const handleChange = (event) => {
     const { value, name } = event.target;
     deleteErrorMessage(name);
@@ -87,6 +78,7 @@ const Form = () => {
     }
   };
 
+  // Handle Form Submit
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -103,23 +95,10 @@ const Form = () => {
       return;
 
     addMutation.mutate(todoObj);
-
-    // try {
-    //   const response = await axios(API_URL, {
-    //     method: "POST",
-    //     data: todoObj,
-    //   });
-
-    //   if (response) {
-    //     addTodoList(response.data);
-    //     toast.success("Todo added successfully");
-    //     resetTodoObj();
-    //   }
-    // } catch (error) {
-    //   toast.error(error.message);
-    // }
   };
 
+
+  // Handling Edit
   const handleSave = async (event) => {
     event.preventDefault();
 
@@ -132,21 +111,6 @@ const Form = () => {
     }
 
     updateMutation.mutate(todoObj);
-
-    // try {
-    //   const response = await axios(API_URL, {
-    //     method: "PUT",
-    //     data: todoObj,
-    //   });
-
-    //   if (response) {
-    //     resetTodoObj();
-    //     updateTodoList(response.data);
-    //     toast.success("Todo updated successfully");
-    //   }
-    // } catch (error) {
-    //   toast.error(error.message);
-    // }
   };
 
   return (
