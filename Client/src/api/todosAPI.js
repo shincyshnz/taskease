@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // formatting date
-const formatDate = (dateString) => {
+export const formatDate = (dateString) => {
   const parsedDate = new Date(dateString);
   const year = parsedDate.getFullYear();
   const month = `${parsedDate.getMonth() + 1}`.padStart(2, "0"); // Months are zero-based

@@ -7,7 +7,7 @@ import { useTodo } from "../../context/todoContext";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { postTodos } from "../../api/todosAPI";
+import { formatDate, postTodos } from "../../api/todosAPI";
 
 const API_URL = "http://localhost:3050/api/todo";
 
@@ -44,6 +44,7 @@ const Form = () => {
         return prevData.map((todo) => {
           if (todo._id === variables._id) {
             todo = data?.result;
+            todo.date = formatDate(data?.result?.date);
           }
           return todo;
         });
