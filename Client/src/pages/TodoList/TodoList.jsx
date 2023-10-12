@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "./TodoList.css";
 import {
   MdDeleteOutline,
@@ -38,7 +38,7 @@ const TodoList = () => {
       queryClient.setQueryData(["todos"], (prevData) =>
         prevData.filter((todo) => todo._id !== data.result)
       );
-      toast.warning(`${data?.result?.title} deleted successfully`);
+      toast.warning("Todo deleted successfully");
 
       // refetch todoList
       // queryClient.invalidateQueries({ queryKey: ["todos"] });
@@ -59,8 +59,9 @@ const TodoList = () => {
         });
       });
 
-      data?.result?.isCompleted ?
-        toast.success(`Hurray!... You completed the ${data?.result?.title}`) : toast.warning(`You marked ${data?.result?.title} as incomplete.`)
+      data?.result?.isCompleted
+        ? toast.success(`Hurray!... You completed the ${data?.result?.title}`)
+        : toast.warning(`You marked ${data?.result?.title} as incomplete.`);
     },
   });
 
@@ -159,7 +160,7 @@ const TodoList = () => {
                   }`}
                   // onClick={() => handleIsComplete(todoItem?._id)}
                   onClick={() => isCompleteMutation.mutate(todoItem?._id)}
-                />
+                ></MdTaskAlt>
               </div>
 
               <div className="title-container">

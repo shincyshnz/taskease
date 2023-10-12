@@ -26,14 +26,17 @@ export const getTodos = async () => {
 
 // Create or update todos
 export const postTodos = async (todoObj) => {
-  let method = "POST";
-
-  if (todoObj._id) {
-    method = "PUT";
-  }
 
   const response = await axios(import.meta.env.VITE_TODOS_API, {
-    method,
+    method:"POST",
+    data: todoObj,
+  });
+  return response?.data;
+};
+
+export const updateTodos = async (todoObj) => {
+  const response = await axios(import.meta.env.VITE_TODOS_API, {
+    method:"PUT",
     data: todoObj,
   });
   return response?.data;
@@ -52,7 +55,7 @@ export const deleteTodo = async (todo) => {
 
 // Update complete status for todos
 export const completeTodo = async (todoId) => {
-  
-    const response = await axios.put(`${import.meta.env.VITE_TODOS_API}/${todoId}`);
-    return response?.data;
-  };
+
+  const response = await axios.put(`${import.meta.env.VITE_TODOS_API}/${todoId}`);
+  return response?.data;
+};

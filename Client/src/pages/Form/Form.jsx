@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Input from "../../components/Input/Input";
 import TextArea from "../../components/TextArea/TextArea";
 import Button from "../../components/Button/Button";
@@ -25,17 +25,34 @@ const Form = () => {
 
   const addMutation = useMutation({
     mutationFn: (todo) => postTodos(todo),
-    onSuccess: (data) => {
+    onSuccess: (data, variables) => {
       queryClient.setQueryData(["todos"], (prevData) => [
         ...prevData,
         data?.result,
       ]);
       toast.success("Todo added successfully");
+
       resetTodoObj();
     },
   });
-
   addMutation.error && toast.error(addMutation.error.message);
+
+  const updateMutation = useMutation({
+    mutationFn: (todo) => postTodos(todo),
+    onSuccess: (data, variables) => {
+      queryClient.setQueryData(["todos"], (prevData) => {
+        return prevData.map((todo) => {
+          if (todo._id === variables._id) {
+            todo = data?.result;
+          }
+          return todo;
+        });
+      });
+      toast.success(`${data?.result?.title} updated successfully`);
+      resetTodoObj();
+    },
+  });
+  updateMutation.error && toast.error(updateMutation.error.message);
 
   const handleChange = (event) => {
     const { value, name } = event.target;
@@ -60,9 +77,10 @@ const Form = () => {
       return;
     }
 
-    if (name == "date") {
+    if (name === "date") {
       const today = new Date();
-      value <= today &&
+      const dueDate = new Date(value);
+      dueDate <= today &&
         setErrorMessage(name, "Due Date must be Today or future");
       return;
     }
@@ -71,7 +89,7 @@ const Form = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (todoObj.date === "" ) {
+    if (todoObj.date === "") {
       setErrorMessage("date", "Select a due date");
       return;
     }
@@ -112,20 +130,22 @@ const Form = () => {
       return;
     }
 
-    try {
-      const response = await axios(API_URL, {
-        method: "PUT",
-        data: todoObj,
-      });
+    updateMutation.mutate(todoObj);
 
-      if (response) {
-        resetTodoObj();
-        updateTodoList(response.data);
-        toast.success("Todo updated successfully");
-      }
-    } catch (error) {
-      toast.error(error.message);
-    }
+    // try {
+    //   const response = await axios(API_URL, {
+    //     method: "PUT",
+    //     data: todoObj,
+    //   });
+
+    //   if (response) {
+    //     resetTodoObj();
+    //     updateTodoList(response.data);
+    //     toast.success("Todo updated successfully");
+    //   }
+    // } catch (error) {
+    //   toast.error(error.message);
+    // }
   };
 
   return (
