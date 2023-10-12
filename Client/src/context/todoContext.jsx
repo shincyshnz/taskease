@@ -57,7 +57,7 @@ export const TodoProvider = ({ children }) => {
   useEffect(() => {
     deleteErrorMessage("apiError");
     fetchTodos();
-  }, [todoObj]);
+  }, []);
 
   const addTodoList = (todoItem) => {
     setTodoList((prev) => ([

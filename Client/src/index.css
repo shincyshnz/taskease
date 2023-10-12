@@ -15,6 +15,7 @@
 
 body{
   background-color: black;
+  color: var(--bg-light-grey);
 }
 
 .container{

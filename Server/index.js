@@ -102,8 +102,9 @@ app.delete("/api/todo", async (req, res) => {
 });
 
 app.get("/*", (req, res) => {
+    const url = req.url;
     res.status(400).json({
-        message: "API url doesnot exists ",
+        message: `"${url}" url doesnot exists`,
     });
 
 });

@@ -16,7 +16,7 @@ const Form = () => {
     updateTodoObj,
     resetTodoObj,
     addTodoList,
-    updateTodoList
+    updateTodoList,
   } = useTodo();
 
   const handleChange = (event) => {
@@ -135,9 +135,6 @@ const Form = () => {
           placeholder="Due Date"
         />
         {errorObj.date && <label className="error">{errorObj.date}</label>}
-        {errorObj.apiError && (
-          <label className="error">{errorObj.apiError}</label>
-        )}
 
         {todoObj?._id ? (
           <>
@@ -158,6 +155,10 @@ const Form = () => {
             onClick={handleSubmit}
             buttonText={"Add"}
           />
+        )}
+
+        {errorObj.apiError && (
+          <label className="error">{errorObj.apiError}</label>
         )}
       </div>
     </>
