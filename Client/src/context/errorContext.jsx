@@ -24,6 +24,7 @@ export const ErrorProvider = ({ children }) => {
     <ErrorContext.Provider
       value={{ 
         errorObj, 
+        setErrorObj,
         setErrorMessage,
         deleteErrorMessage }}
     >

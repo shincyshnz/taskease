@@ -15,7 +15,7 @@ export const TodoProvider = ({ children }) => {
   };
   const [todoObj, setTodoObj] = useState(INITIAL_TODOOBJ);
   const [todoList, setTodoList] = useState([]);
-  const { setErrorMessage, deleteErrorMessage } = useError();
+  const { setErrorObj, setErrorMessage, deleteErrorMessage } = useError();
 
   const formatDate = (dateString) => {
     const parsedDate = new Date(dateString);
@@ -51,6 +51,7 @@ export const TodoProvider = ({ children }) => {
   };
 
   const resetTodoObj = () => {
+    setErrorObj((prev) => (prev = {}));
     setTodoObj((prev) => (prev = INITIAL_TODOOBJ));
   };
 

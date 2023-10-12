@@ -1,22 +1,16 @@
-import React, { useEffect, useLayoutEffect } from "react";
-import Button from "../../components/Button/Button";
+import React, { useEffect } from "react";
+import "./TodoList.css";
 import {
   MdDeleteOutline,
   MdOutlineModeEditOutline,
   MdTaskAlt,
 } from "react-icons/md";
-import "./TodoList.css";
-import { useTodo } from "../../context/todoContext";
-import axios from "axios";
 import { toast } from "react-toastify";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import Button from "../../components/Button/Button";
 import { useError } from "../../context/errorContext";
-import {
-  completeTodo,
-  deleteTodo,
-  getTodos,
-  postTodos,
-} from "../../api/todosAPI";
+import { useTodo } from "../../context/todoContext";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { completeTodo, deleteTodo, getTodos } from "../../api/todosAPI";
 
 const API_URL = "http://localhost:3050/api/todo";
 
@@ -44,14 +38,14 @@ const TodoList = () => {
       queryClient.setQueryData(["todos"], (prevData) =>
         prevData.filter((todo) => todo._id !== data.result)
       );
-      toast.warning("Todo deleted successfully");
+      toast.warning(`${data?.result?.title} deleted successfully`);
 
       // refetch todoList
       // queryClient.invalidateQueries({ queryKey: ["todos"] });
     },
   });
 
-  deleteMutation.isError && toast.error(deleteMutation.error.message);
+  deleteMutation.error && toast.error(deleteMutation.error.message);
 
   const isCompleteMutation = useMutation({
     mutationFn: (todoId) => completeTodo(todoId),
@@ -65,12 +59,12 @@ const TodoList = () => {
         });
       });
 
-      data?.result?.isCompleted &&
-        toast.success(`Hurray!... You completed the ${data?.result?.title}`);
+      data?.result?.isCompleted ?
+        toast.success(`Hurray!... You completed the ${data?.result?.title}`) : toast.warning(`You marked ${data?.result?.title} as incomplete.`)
     },
   });
 
-  isCompleteMutation.isError && toast.error(isCompleteMutation.error.message);
+  isCompleteMutation.error && toast.error(isCompleteMutation.error.message);
 
   useEffect(() => {
     if (error) {

@@ -6,6 +6,8 @@ import { useError } from "../../context/errorContext";
 import { useTodo } from "../../context/todoContext";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { postTodos } from "../../api/todosAPI";
 
 const API_URL = "http://localhost:3050/api/todo";
 
@@ -18,6 +20,22 @@ const Form = () => {
     addTodoList,
     updateTodoList,
   } = useTodo();
+
+  const queryClient = useQueryClient();
+
+  const addMutation = useMutation({
+    mutationFn: (todo) => postTodos(todo),
+    onSuccess: (data) => {
+      queryClient.setQueryData(["todos"], (prevData) => [
+        ...prevData,
+        data?.result,
+      ]);
+      toast.success("Todo added successfully");
+      resetTodoObj();
+    },
+  });
+
+  addMutation.error && toast.error(addMutation.error.message);
 
   const handleChange = (event) => {
     const { value, name } = event.target;
@@ -53,6 +71,11 @@ const Form = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    if (todoObj.date === "" ) {
+      setErrorMessage("date", "Select a due date");
+      return;
+    }
+
     if (
       errorObj.title !== "" ||
       errorObj.description !== "" ||
@@ -60,32 +83,29 @@ const Form = () => {
     )
       return;
 
-    if (todoObj.date === "") {
-      setErrorMessage("date", "Select a due date");
-      return;
-    }
+    addMutation.mutate(todoObj);
 
-    try {
-      const response = await axios(API_URL, {
-        method: "POST",
-        data: todoObj,
-      });
+    // try {
+    //   const response = await axios(API_URL, {
+    //     method: "POST",
+    //     data: todoObj,
+    //   });
 
-      if (response) {
-        addTodoList(response.data);
-        toast.success("Todo added successfully");
-        resetTodoObj();
-      }
-    } catch (error) {
-      toast.error(error.message);
-    }
+    //   if (response) {
+    //     addTodoList(response.data);
+    //     toast.success("Todo added successfully");
+    //     resetTodoObj();
+    //   }
+    // } catch (error) {
+    //   toast.error(error.message);
+    // }
   };
 
   const handleSave = async (event) => {
     event.preventDefault();
 
-    // const anyError = Object.values(errorObj).some((err) => err !== "");
-    // if (anyError) return;
+    const anyError = Object.values(errorObj).some((err) => err !== "");
+    if (anyError) return;
 
     if (todoObj.date === "") {
       setErrorMessage("date", "Select a due date");
@@ -106,10 +126,6 @@ const Form = () => {
     } catch (error) {
       toast.error(error.message);
     }
-  };
-
-  const handleCancel = () => {
-    resetTodoObj();
   };
 
   return (
@@ -145,7 +161,7 @@ const Form = () => {
             />
             <Button
               className={"btn-add"}
-              onClick={handleCancel}
+              onClick={() => resetTodoObj()}
               buttonText={"Cancel"}
             />
           </>

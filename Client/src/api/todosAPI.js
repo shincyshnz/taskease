@@ -1,5 +1,4 @@
 import axios from "axios";
-import { useTodo } from "../context/todoContext";
 
 // formatting date
 const formatDate = (dateString) => {
@@ -26,9 +25,8 @@ export const getTodos = async () => {
 };
 
 // Create or update todos
-export const postTodos = async () => {
+export const postTodos = async (todoObj) => {
   let method = "POST";
-  const { todoObj } = useTodo();
 
   if (todoObj._id) {
     method = "PUT";
