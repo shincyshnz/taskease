@@ -143,7 +143,7 @@ app.get("/*", (req, res) => {
 
 });
 
-const PORT = 3050;
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
     console.log(`Sever started at ${PORT}`);
 });
