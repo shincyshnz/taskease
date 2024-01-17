@@ -6,7 +6,17 @@ const todoModel = require("./models/todoModel");
 const app = express();
 
 app.use(express.json());
-app.use(cors());
+// app.use(cors());
+
+app.use(cors({
+    origin:["https://taskease-client.onrender.com"],
+    // origin: ["*"],
+    credentials : true,
+    cookie:{
+        sameSite : "none",
+        secure:true,
+    }
+}));
 
 
 connectDb();
