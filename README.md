@@ -2,7 +2,7 @@
 
 Simple task manager app to help users to stay organized for their day to day tasks. This app is developed using React and NodeJS with error handling. You can add,edit and delete any task. The task details are stored in MongoDb.
 
-## Live : [TaskEase](https://taskease-client.onrender.com/)
+## Live : ([TaskEase](https://taskease-client.onrender.com/))
 
 ![Screenshot from 2023-10-12 17-14-24](https://github.com/shincyshnz/taskease/assets/48871950/c76229d1-b25f-4bf3-a939-a51d6a69bf47)
 
